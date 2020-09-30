@@ -1,8 +1,12 @@
 import pandas as pd
+import numpy as np 
 
 class Teacher_Knowledge():
 	def childanalyzer():
 		pass
+
+	def check_feature_length():
+		return len(self.data.columns)
 
 class Child_Capabilities():
 	def add_feature():
