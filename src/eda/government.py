@@ -9,6 +9,7 @@ import pickle
 import numpy
 import pandas as pd 
 from src.helper import create_logger
+from src.eda.graphs import Graph
 
 logger = create_logger('process','logs/Government.log', logging.DEBUG, logging.WARNING)
 
@@ -20,7 +21,7 @@ class Control_Population():
 		Filename = default.csv
 		"""
 		location = 'data/index_csv/'+ filename
-		logger.info(f"Looking for {location}")
+		logger.debug(f"Looking for {location}")
 		try:
 			data = pd.read_csv(location)
 			ticker_list = data["Symbol"]
@@ -30,7 +31,7 @@ class Control_Population():
 			return False
 
 
-		logger.info(f"Checking population")
+		logger.debug(f"Checking population")
 		for j in self.fetch_parent_by_nate(filename[:-4],start_date,end_date):
 			logger.warning("Found Existing Parent")
 			return False
@@ -71,9 +72,14 @@ class Control_Population():
 	def fetch_parent_by_nate(self,name,start_date,end_date): 
 		temp = []
 		for loc in self.fetch_parent_by_name(name):
-			if self.population[loc].start_date==start_date.date() and self.population[loc].end_date==end_date.date():
-				logger.info("Found Parent")
-				temp.append(loc)
+			try:
+				if self.population[loc].start_date==start_date.date() and self.population[loc].end_date==end_date.date():
+					logger.debug("Found Parent")
+					temp.append(loc)
+			except:
+				if self.population[loc].start_date==start_date and self.population[loc].end_date==end_date:
+					logger.debug("Found Parent")
+					temp.append(loc)
 		return temp
 
 
@@ -110,13 +116,12 @@ class Government_Rules():
 	#Create hyperparameter files
 
 
-class Government(Control_Population,Government_Rules):
+class Government(Control_Population,Government_Rules,Graph):
 
 	def __init__(self,government_name):
 		self.government = government_name
 		self.population = []
 		logger.info("Government Initiated")
-
 
 	def dump(self,location):
 		try:

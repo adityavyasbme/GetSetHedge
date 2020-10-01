@@ -34,7 +34,11 @@ def write():
         gov = Government("User1")
         gov.add_parent(index,start_date,end_date)
 
-    cb1 = st.checkbox('Population Stats')
+    if st.button('Add Tracker Config'):
+        gov.add_parent(index,start_date,end_date)
+        gov.dump("data/User1.pkl")
+
+    cb1 = st.checkbox('Available Trackers')
     if cb1:
         st.write([i.get_stats() for i in gov.get_population()])
 
