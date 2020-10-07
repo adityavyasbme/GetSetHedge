@@ -6,20 +6,20 @@ import yfinance as yf
 from src.helper import load_file
 class Beta():
 
-    config = {
-    "name" : "Beta",
-    "required_days" : 90,
-    "extra_requirements":[]
-    }
-
     def __init__(self,baby,market_name="^GSPC"):
         self.baby = baby
         self.market_name="^GSPC"
+        self.config = {
+                        "name" : "Beta",
+                        "required_days" : 90,
+                        "extra_requirements":[]
+                        }
+
 
     def calculate(self,date):
         stat= False
 
-        DD = datetime.timedelta(days=config["required_days"])
+        DD = datetime.timedelta(days=self.config["required_days"])
         last_date = date-DD
 
         market,_ = load_file("data/index_csv/market.pkl")

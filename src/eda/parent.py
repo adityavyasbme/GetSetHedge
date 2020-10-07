@@ -162,7 +162,7 @@ class Parent(Biological_Properties,Secure_Properties,Shops):
         self.start_date = start_date
         self.end_date = end_date
         self.feature_list = []
-        self.Factors = []
+        self.Factors = {}
 
     def worker(self,tick):
         name = str(tick)+'_'+str(self.start_date)+"_"+str(self.end_date)+".pkl"

@@ -5,35 +5,29 @@ import pandas as pd
 
 class Momentum():
 
-    config = {
-    "name" : "Momentum",
-    "required_days" : 30,
-    "extra_requirements":[]
-    }
-
-    def __init__(self,baby,market_name="^GSPC"):
+    def __init__(self,baby):
         self.baby = baby
-        self.market_name="^GSPC"
+        self.config = {
+                        "name" : "Momentum",
+                        "required_days" : 30,
+                        "extra_requirements":[]
+                        }
+
 
     def calculate(self,date):
-        stat= False
+        try:
+            mask = (self.baby.data.index.date > date)
+        except:
+            mask = (self.baby.data.index > date)
+        data= self.baby.data.loc[mask]
 
-        DD = datetime.timedelta(days=config["required_days"])
-        last_date = date-DD
+        if len(data)==0:
+            return pd.DataFrame()
 
-        if last_date not in self.baby.data.index:
-            data = pd.DataFrame()
-        else:
-            mask = (self.baby.data.index > last_date) & (self.baby.data.index < date)
-            data= self.baby.data.loc[mask]
-
-        if len(data)==0 or len(market)==0:
-            return {"Date":date,self.baby.name:None}
-
-        data = data["Adj Close"].reset_index(name=self.baby.name)
-        data = data.set_index("Date")
-
+        data = data["Adj Close"]
+        data = data.rename(self.baby.name)
         # calculate monthly returns
-        monthly_returns = data.pct_change(30)
+        monthly_returns = data.pct_change(self.config["required_days"])
+
         return monthly_returns.T
 
