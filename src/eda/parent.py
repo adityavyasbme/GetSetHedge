@@ -12,6 +12,8 @@ from multiprocessing import Pool
 from multiprocessing import Manager
 from multiprocessing.sharedctypes import Array
 import streamlit as st
+import datetime
+import shutil
 
 logger = create_logger('parent','logs/Parent.log', logging.INFO, logging.WARNING)
 
@@ -20,6 +22,9 @@ class Shops():
         pass
 
     def parser(self,name,ticker):
+        """
+        Function to take name and ticker and download data from yfinance
+        """
         if name in listdir(".temp/"):
             try:
                 with open(".temp/"+name, 'rb') as f:
@@ -27,7 +32,8 @@ class Shops():
             except:
                 pass
         else:
-            data = yf.download(ticker, start=self.start_date, end=self.end_date)
+            self.new_date = self.start_date-datetime.timedelta(days = 100)
+            data = yf.download(ticker, start=self.new_date, end=self.end_date)
             with open(".temp/"+name, 'wb') as f:
                 pickle.dump(data, f)
         return data
@@ -111,11 +117,40 @@ class Secure_Properties():
                 logger.debug("found baby")
         return temp
 
+    def fetch_data_in_range(self,baby,start_date,end_date):
+        logger.info(f"Fetching children: {baby.name}")
+        data = baby.data.copy()
+        data.reset_index(inplace=True)
+        data = data.rename(columns = {'index':'Date'})
+
+        try:
+            mask = (data['Date'] > start_date) & (data['Date'] <= end_date)
+        except:
+            logger.warning("Error in Creating Mask of a children. Check code in Parent.py")
+        data= data.loc[mask]
+        return data
+
+    def fetch_all_child_in_range(self,start_date,end_date):
+        temp={}
+        logger.info(f"Fetching All Childs from {start_date} to {end_date}")
+        logger.info(f"Children Size {len(self.children)}")
+        for loc,baby in enumerate(self.children):
+            data = self.fetch_data_in_range(baby,start_date,end_date)
+            temp[baby.name]=data
+        return temp
+
     def get_feature_list(self):
         for i in self.children:
             self.feature_list = i.get_features()
             return self.feature_list
 
+
+    def clear_dir(self,path_=".temp/"):
+        try:
+            shutil.rmtree(path_)
+            os.mkdir(path_)
+        except:
+            os.mkdir(path_)
 
 
 
@@ -127,6 +162,7 @@ class Parent(Biological_Properties,Secure_Properties,Shops):
         self.start_date = start_date
         self.end_date = end_date
         self.feature_list = []
+        self.Factors = []
 
     def worker(self,tick):
         name = str(tick)+'_'+str(self.start_date)+"_"+str(self.end_date)+".pkl"
@@ -150,4 +186,6 @@ class Parent(Biological_Properties,Secure_Properties,Shops):
                 [name,data]=i
                 self.add_child(name,data)
             logger.info("Processing Closed")
+            return True
+        return False
 

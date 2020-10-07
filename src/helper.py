@@ -1,6 +1,7 @@
 from os import listdir
 import pandas as pd
 import logging
+import pickle
 
 def find_csv_filenames( path_to_dir, suffix=".csv" ):
     filenames = listdir(path_to_dir)
@@ -9,7 +10,7 @@ def find_csv_filenames( path_to_dir, suffix=".csv" ):
 def read_csv(path_to_dir,name):
 	#TODO check if the path exist
 	return pd.read_csv(path_to_dir+name)
-	
+
 def create_logger(name,logFile, fileLogLevel, streamLogLevel):
     # create logger for "Sample App"
     logger = logging.getLogger(name)
@@ -34,3 +35,17 @@ def create_logger(name,logFile, fileLogLevel, streamLogLevel):
     logger.addHandler(fh)
 
     return logger
+
+def dump_file(location,file):
+    try:
+        with open(location, 'wb') as f:
+            pickle.dump(file, f)
+    except:
+        print("Error in dumping File")
+
+def load_file(location):
+    try:
+        with open(location, 'rb') as f:
+            return pickle.load(f),True
+    except:
+        return None,False

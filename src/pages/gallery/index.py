@@ -19,7 +19,7 @@ def write():
     ast.shared.components.title_awesome("Select Index Name")
 
     start_date = st.sidebar.date_input('start date', datetime.date(2019,1,1))
-    end_date = st.sidebar.date_input('End date', datetime.date(2020,1,1))
+    end_date = st.sidebar.date_input('End date', datetime.date(2019,3,31))
 
 
     #TODO: fill up the index_list
@@ -53,6 +53,6 @@ def write():
 
 
 
-    
+
 if __name__ == "__main__":
     write()

@@ -8,7 +8,6 @@ from src.eda.government import Government
 from src.helper import create_logger
 from src.features.features import Feature
 from src.features.indicators.custom_indicator import Custom_indicator
-from src import SessionState
 
 logger = create_logger('viz','logs/Viz.log', logging.DEBUG, logging.WARNING)
 
@@ -59,7 +58,14 @@ def write():
         checks()
         loc=fetch_tracker(tracker,gov)
         parent = gov.population[loc[0]]
+
+        #Turn this off if you want temp files
+        parent.clear_dir()
+
         flag = parent.populate()
+        if flag:
+            update(parent,gov)
+
         st.write(parent.get_stats())
 
         def create_checkbox(name,code,*args,**kwargs):

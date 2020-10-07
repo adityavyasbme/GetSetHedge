@@ -5,3 +5,5 @@ yfinance
 pickle
 numpy
 TA-Lib
+statsmodel
+lxml
