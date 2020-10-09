@@ -14,7 +14,6 @@ pyvenv.cfg
 *.so
 
 # Distribution / packaging
-data/
 bin/
 include/
 .Python
@@ -116,10 +115,8 @@ venv.bak/
 # pycharm
 .idea/
 
-# all logs
-logs/
-
 .temp/
 
+demo_env/
 
 

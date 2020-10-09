@@ -1,12 +1,28 @@
+# base image
 FROM python:3.7.7
 
-WORKDIR .
+# streamlit-specific commands
+RUN mkdir -p /root/.streamlit
+RUN bash -c 'echo -e "\
+[general]\n\
+email = \"\"\n\
+" > /root/.streamlit/credentials.toml'
+RUN bash -c 'echo -e "\
+[server]\n\
+enableCORS = false\n\
+" > /root/.streamlit/config.toml'
 
-ARG PIP_EXTRA_INDEX_URL
+# exposing default port for streamlit
+EXPOSE 8501
 
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+# copy over and install packages
+COPY requirements.txt ./requirements.txt
+RUN pip3 install -r requirements.txt
 
-EXPOSE 5000
+RUN pip install yfinance
 
-CMD ["bash", "./run.sh"]
+# copying everything over
+COPY . .
+
+# run app
+CMD streamlit run stream.py

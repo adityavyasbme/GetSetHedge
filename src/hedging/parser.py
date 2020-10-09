@@ -14,31 +14,40 @@ import glob
 import itertools
 from glob import iglob
 from os.path import basename, relpath, sep, splitext
-logger = create_logger('Parser','logs/Hedging.log', logging.DEBUG, logging.WARNING)
+logger = create_logger('Parser', 'logs/Hedging.log',
+                       logging.DEBUG, logging.WARNING)
 
 
 class Parser():
-    def __init__(self,caller):
-        self.factor = {}
+    def __init__(self, caller):
+        self.factor = []
         self.call = caller
 
-    def find_all_factor(self):
-        #Find factors in factors folder and their requirement
-        lis = os.listdir("src/hedging/factors/")
-        self.factors = self.import_plugins("src/hedging/factors/",create_instance=False,filter_abstract=False)
-        return self.factors
-        # a = self.import_submodules("src/hedging/factors/")
+    def import_plugins(self, *args, **kwargs):
+        return 0
 
-    def run_factor(self,class_name,baby,time_chunk):
+    # def find_all_factor(self):
+    #     # Find factors in factors folder and their requirement
+    #     # lis = os.listdir("src/hedging/factors/")
+    #     self.factors = self.import_plugins(
+    #         "src/hedging/factors/", create_instance=False, filter_abstract=False)
+    #     return self.factors
+    #     # a = self.import_submodules("src/hedging/factors/")
 
-        obj = class_name(baby,market_name="^GSPC")
-        pool=Pool()
-        results = pool.map(obj.calculate, list(time_chunk))
+    def run_factor(self, class_name, baby, time_chunk):
+
+        obj = class_name(baby, market_name="^GSPC")
+        pool = Pool()
+        try:
+            results = pool.map(obj.calculate, list(time_chunk))
+        except:
+            pool.close()
+            return pd.DataFrame()
         pool.close()
         pool.join()
         df = pd.DataFrame()
         for i in results:
-            df=df.append(i,ignore_index=True)
+            df = df.append(i, ignore_index=True)
         df = df.set_index("Date")
 
         # for x in time_chunk:
@@ -50,29 +59,28 @@ class Parser():
 
         return df.T
 
-    def parse_multiple(self,num,class_name):
-        #list of all children
-        #get chunk of data where time_chunk
+    def parse_multiple(self, num, class_name):
+        # list of all children
+        # get chunk of data where time_chunk
         time_chunk = self.call.time_chunks[num]
         c = pd.DataFrame()
-        for baby in self.call.parent.children[0:5]:
-            #For multiple babies
+        for baby in self.call.parent.children:
+            # For multiple babies
             logging.info(f"Running for {baby.name}")
-            result = self.run_factor(class_name,baby,time_chunk)
+            result = self.run_factor(class_name, baby, time_chunk)
             result.rename_axis("Ticker").reset_index()
             # result.rename({"index":"Ticker"})
             c = c.append(result)
             # beta = self.run_factor("Beta",chunk,self.call.market)
-            #Pooling function for multiple chunks
+            # Pooling function for multiple chunks
         return c
 
-
     def stat(self):
-        dic = {"Factors":{}}
+        dic = {"Factors": {}}
         counter = 0
         for i in self.factors:
-            dic["Factors"]["Factor "+str(counter)]:i.config
-            counter+=1
+            dic["Factors"]["Factor "+str(counter)]: i.config
+            counter += 1
         return dic
 
 
@@ -90,63 +98,60 @@ print(results)
 
 """
 
+# def import_plugins(self,plugins_package_directory_path, base_class=None, create_instance=True, filter_abstract=True):
 
+#     plugins_package_name = os.path.basename(plugins_package_directory_path)
 
-    # def import_plugins(self,plugins_package_directory_path, base_class=None, create_instance=True, filter_abstract=True):
+#     # -----------------------------
+#     # Iterate all python files within that directory
+#     plugin_file_paths = glob.glob(os.path.join(plugins_package_directory_path, "*.py"))
 
-    #     plugins_package_name = os.path.basename(plugins_package_directory_path)
+#     for plugin_file_path in plugin_file_paths:
+#         plugin_file_name = os.path.basename(plugin_file_path)
 
-    #     # -----------------------------
-    #     # Iterate all python files within that directory
-    #     plugin_file_paths = glob.glob(os.path.join(plugins_package_directory_path, "*.py"))
+#         module_name = os.path.splitext(plugin_file_name)[0]
 
-    #     for plugin_file_path in plugin_file_paths:
-    #         plugin_file_name = os.path.basename(plugin_file_path)
+#         if module_name.startswith("__"):
+#             continue
 
-    #         module_name = os.path.splitext(plugin_file_name)[0]
+#         # -----------------------------
+#         # Import python file
+#         try:
+#             logger.info(plugin_file_path)
+#             module = importlib.import_module("."+module_name,package="src.hedging.factors")
+#         except ModuleNotFoundError as e:
+#             st.error(e)
 
-    #         if module_name.startswith("__"):
-    #             continue
+#         # -----------------------------
+#         # Iterate items inside imported python file
 
-    #         # -----------------------------
-    #         # Import python file
-    #         try:
-    #             logger.info(plugin_file_path)
-    #             module = importlib.import_module("."+module_name,package="src.hedging.factors")
-    #         except ModuleNotFoundError as e:
-    #             st.error(e)
+#         for item in dir(module):
+#             value = getattr(module, item)
+#             if not value:
+#                 continue
 
-    #         # -----------------------------
-    #         # Iterate items inside imported python file
+#             if not inspect.isclass(value):
+#                 continue
 
-    #         for item in dir(module):
-    #             value = getattr(module, item)
-    #             if not value:
-    #                 continue
+#             if filter_abstract and inspect.isabstract(value):
+#                 continue
 
-    #             if not inspect.isclass(value):
-    #                 continue
+#             if base_class is not None:
+#                 if type(value) != type(base_class):
+#                     continue
 
-    #             if filter_abstract and inspect.isabstract(value):
-    #                 continue
+#             # -----------------------------
+#             # Instantiate / return type (depends on create_instance)
 
-    #             if base_class is not None:
-    #                 if type(value) != type(base_class):
-    #                     continue
+#             yield value() if create_instance else value
 
-    #             # -----------------------------
-    #             # Instantiate / return type (depends on create_instance)
-
-    #             yield value() if create_instance else value
-
-
-    # def fetch_class(self,class_name):
-    #     factor = None
-    #     for fac in self.find_all_factor():
-    #         if fac.config["name"]==class_name:
-    #             factor = fac
-    #     if not factor:
-    #         logger.warning(f"No Class Found with name: {class_name}")
-    #         return None
-    #     else:
-    #         return factor
+# def fetch_class(self,class_name):
+#     factor = None
+#     for fac in self.find_all_factor():
+#         if fac.config["name"]==class_name:
+#             factor = fac
+#     if not factor:
+#         logger.warning(f"No Class Found with name: {class_name}")
+#         return None
+#     else:
+#         return factor

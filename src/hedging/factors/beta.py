@@ -4,25 +4,26 @@ import pandas as pd
 import statsmodels.api as sm
 import yfinance as yf
 from src.helper import load_file
+
+
 class Beta():
 
-    def __init__(self,baby,market_name="^GSPC"):
+    def __init__(self, baby, market_name="^GSPC"):
         self.baby = baby
-        self.market_name="^GSPC"
+        self.market_name = "^GSPC"
         self.config = {
-                        "name" : "Beta",
-                        "required_days" : 90,
-                        "extra_requirements":[]
-                        }
+            "name": "Beta",
+            "required_days": 30,
+            "extra_requirements": []
+        }
 
-
-    def calculate(self,date):
-        stat= False
+    def calculate(self, date):
+        stat = False
 
         DD = datetime.timedelta(days=self.config["required_days"])
         last_date = date-DD
 
-        market,_ = load_file("data/index_csv/market.pkl")
+        market, _ = load_file("data/index_csv/market.pkl")
         mask = (market.index >= last_date) & (market.index < date)
         market = market.loc[mask]
         market = market["Adj Close"].reset_index(name=self.market_name)
@@ -33,15 +34,15 @@ class Beta():
         # except:
         #     print("Error in Market")
 
-
         if last_date not in self.baby.data.index:
             data = yf.download(self.baby.name, start=last_date, end=date)
         else:
-            mask = (self.baby.data.index > last_date) & (self.baby.data.index < date)
-            data= self.baby.data.loc[mask]
+            mask = (self.baby.data.index > last_date) & (
+                self.baby.data.index < date)
+            data = self.baby.data.loc[mask]
 
-        if len(data)==0 or len(market)==0:
-            return {"Date":date,self.baby.name:None}
+        if len(data) == 0 or len(market) == 0:
+            return {"Date": date, self.baby.name: None}
 
         data = data["Adj Close"].reset_index(name=self.baby.name)
         data = pd.merge(left=data, right=market, how='inner')
@@ -66,5 +67,5 @@ class Beta():
         if stat:
             st.write(
                 f"Start: {last_date} End: {date}"
-                )
-        return {"Date":date,self.baby.name:results.params[self.market_name]}
+            )
+        return {"Date": date, self.baby.name: results.params[self.market_name]}

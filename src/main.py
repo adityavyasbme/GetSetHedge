@@ -15,10 +15,8 @@ PAGES = {
     "Input": src.pages.gallery.index,
     "Viz": src.pages.data,
     "Hedging": src.pages.hedging,
-    "About": src.pages.about,
+    "Documentation": src.pages.about,
 }
-
-
 
 
 def main():
@@ -33,14 +31,13 @@ def main():
     st.sidebar.info(
         "This an open source project and you are very welcome to **contribute** your awesome "
         "comments, questions, resources and apps as "
-        "[issues](https://www.google.com) of or "
-        "[pull requests](https://www.google.com) "
-        "to the [source code](https://www.google.com). "
+        "[issues](https://github.com/adityavyasbme/GetSetHedge/issues) of or "
+        "[pull requests](https://github.com/adityavyasbme/GetSetHedge/pulls) "
+        "to the [source code](https://github.com/adityavyasbme/GetSetHedge). "
     )
     st.sidebar.title("About")
     st.sidebar.info(
         """
-        This app is maintained by Aditya Vyas. You can learn more about me at
+        This app is maintained by Aditya Vyas. You can learn more about Adi at
         [linkedin.com](https://linkedin.com/in/adityavyasbme)."""
     )
-
