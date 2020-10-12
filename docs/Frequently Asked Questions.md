@@ -98,5 +98,5 @@ Here's a sample code of an indicator stored in '<i>src/features/indicators</i>
 
 Here's Psuedo Code for Beta against Beta Strategy:
 
-![]("https://github.com/adityavyasbme/GetSetHedge/data/images/BAB_Psuedo.jpg")
+![image](https://github.com/adityavyasbme/GetSetHedge/blob/master/data/images/BAB_Psuedo.jpg?raw=true)
 
