@@ -9,7 +9,7 @@ tests/code_test/__pycache__
 Documentation.docx
 ~$cumentation.docx
 pyvenv.cfg
-
+ .vscode/launch.json
 # C extensions
 *.so
 
