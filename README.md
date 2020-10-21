@@ -38,7 +38,7 @@ streamlit run stream.py #Run the app
 ## Key Features
 - Streamlit Web application at your hand
 - You can add your own Index to track at backend
-- Get Risk Exposure of a certain stock to the corresponding factors ETF, currently constructing, Beta Against Beta strategy and Momentum factors.
+- Get Risk Exposure of a certain stock to the corresponding factors ETF, currently constructing, Beta Against Beta strategy and Momentum factors
 - Exploratory Data Analysis, currently uses Altair graphs
 - Create your own custom indicators, e.g. SMA
 - Custom Visualization
