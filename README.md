@@ -30,7 +30,7 @@ pip install yfinance #Confirm install of yfinance library
 ```bash
 streamlit run stream.py #Run the app
 ```
-[![Demo Video](https://img.youtube.com/vi/HTyB8haqvKU/0.jpg)](https://youtu.be/HTyB8haqvKU)
+Check out a sample usage video of the app [here](https://youtu.be/HTyB8haqvKU)
 
 ## Pipeline
 
