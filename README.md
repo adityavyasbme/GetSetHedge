@@ -31,6 +31,10 @@ pip install yfinance #Confirm install of yfinance library
 streamlit run stream.py #Run the app
 ```
 
+## Pipeline
+
+![](https://github.com/adityavyasbme/GetSetHedge/blob/master/data/images/Pipeline.jpg?raw=true)
+
 ## Key Features
 - Streamlit Web application at your hand
 - You can add your own Index to track at backend
