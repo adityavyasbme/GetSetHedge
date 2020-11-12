@@ -39,7 +39,7 @@ Check out a sample usage video of the app [here](https://youtu.be/HTyB8haqvKU)
 ## Key Features
 - Streamlit Web application at your hand
 - You can add your own Index to track at backend
-- Get Risk Exposure of a certain stock to the corresponding factors ETF, currently constructing, Beta Against Beta strategy and Momentum factors
+- Get Risk Exposure of a certain stock to the corresponding factors ETF, currently constructing, Betting Against Beta strategy and Momentum factors
 - Exploratory Data Analysis, currently uses Altair graphs
 - Create your own custom indicators, e.g. SMA
 - Custom Visualization
