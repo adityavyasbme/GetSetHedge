@@ -1,11 +1,5 @@
-import pandas as pd
 import streamlit as st
-from itertools import repeat
-import multiprocessing
-from multiprocessing import Pool
-import pickle
 import logging
-import time
 from src.helper import create_logger
 
 logger = create_logger('Divison', 'logs/Hedging.log',
@@ -13,10 +7,15 @@ logger = create_logger('Divison', 'logs/Hedging.log',
 
 
 class Division():
+    """Class to divide the data into deciles
+    """
+
     def __init__(self):
         self.parent = None
 
     def pull_range_of_time(self):
+        """Pulls the range of time in the index
+        """
         self.range = []
         for x in self.parent.children[0].data.index:
             if x >= self.parent.start_date:
@@ -32,11 +31,19 @@ class Division():
         return chunk
 
     def divide_time(self, rebalancing_freq=25):
+        """Divides the time into chunks/deciles
+
+        Args:
+            rebalancing_freq (int, optional): Reabalancing frequency. Defaults to 25.
+        """
         self.pull_range_of_time()
         with st.spinner(f"Found {len(self.range)} rows"):
             self.time_chunks = self.chunks(self.range, rebalancing_freq)
 
     def stat(self):
+        """Statistics function for monitoring.
+        """
+
         dic = {"time_chunk": {}}
         for key, val in self.time_chunks.items():
             logger.debug("Time Chunk"+str(key)+' has : '+str(len(val))+" ")

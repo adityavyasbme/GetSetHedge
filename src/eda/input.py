@@ -13,7 +13,8 @@ def read_index():
 
 def checK_range():
     """
-    Function to 
+    Function to check the range of input.
+    Can be related to Testing.
     """
 
 # Some Input values

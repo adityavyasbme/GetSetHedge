@@ -5,7 +5,7 @@ import multiprocessing
 from multiprocessing import Pool
 import pickle
 import logging
-
+Î
 from src.helper import create_logger
 
 logger = create_logger('Feature', 'logs/Feature.log',
@@ -13,6 +13,8 @@ logger = create_logger('Feature', 'logs/Feature.log',
 
 
 class Feature():
+    """Feature class
+    """
     def __init__(self, name, requires=[]):
         self.name = name
         self.requires = requires

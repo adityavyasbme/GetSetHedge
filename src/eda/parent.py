@@ -9,10 +9,6 @@ import logging
 import os
 import multiprocessing
 from multiprocessing import Pool
-from multiprocessing import Manager
-from multiprocessing.sharedctypes import Array
-import streamlit as st
-import datetime
 import shutil
 import numpy as np
 
@@ -21,16 +17,20 @@ logger = create_logger('parent', 'logs/Parent.log',
 
 
 class Shops():
+    """Data Source
+    """
+
     def __init__(self):
         self.start_date = None
         self.end_date = None
-        
-    def handle_null(self):
-        pass
 
     def parser(self, name, ticker):
         """
-        Function to take name and ticker and download data from yfinance
+        Description:
+            Function to take name and ticker and download data from yfinance
+        Args:
+            name (str) : Name of the file to store in temp folder
+            ticker (str) : Ticker Symbol
         """
         if name in listdir(".temp/"):
             try:
@@ -47,12 +47,16 @@ class Shops():
 
 
 class Biological_Properties():
+    """CRUD Child
+    """
+
     def __init__(self):
         self.children = []
 
     def add_child(self, ticker, data):
         """
-        Function to add a ticker object
+        Description:
+            Function to add a ticker object
         """
         try:
             baby = Child(ticker, data)
@@ -66,19 +70,21 @@ class Biological_Properties():
 
     def remove_child(self):
         """
-        Function to remove the ticker object
+        TODO: Function to remove the ticker object
         """
         pass
 
     def everyone(self):
         """
-        Function to fetch all the tickers objects
+        Description:
+            Function to fetch all the tickers objects
         """
         return self.children
 
     def everyone_names(self):
         """
-        Function to fetch all the names of the ticker objects
+        Description:
+            Function to fetch all the names of the ticker objects
         """
         temp = []
         for baby in self.children:
@@ -86,12 +92,19 @@ class Biological_Properties():
         return temp
 
     def remove_features(self, names):
+        """
+        Args:
+            names (str): Name of the Feature
+        """
         for i in self.children:
             for j in names:
                 i.remove_feature(j)
 
 
 class Secure_Properties():
+    """Tracker Based Class
+    """
+
     def __init__(self):
         self.children = []
         self.name = None
@@ -107,6 +120,14 @@ class Secure_Properties():
         pass
 
     def check_feature_consistency(self, population):
+        """Check if all the childs have same number of feature length
+
+        Args:
+            population : List storing all the childrens
+
+        Returns:
+            Boolean
+        """
         temp = []
         for i in population:
             temp.append(i.check_feature_length())
@@ -115,6 +136,11 @@ class Secure_Properties():
         return False
 
     def get_stats(self):
+        """return basic information about parent
+
+        Returns:
+            dictionary
+        """
         return {
             "Name": self.name,
             "Number of Tickers": len(self.ticker_list),
@@ -124,6 +150,14 @@ class Secure_Properties():
         }
 
     def fetch_child_by_name(self, name):
+        """Search child by name
+
+        Args:
+            name (str): Name of child (Ticker)
+
+        Returns:
+            List of child objects
+        """
         temp = []
         logger.debug(f"Fetching child {name}")
         for loc, baby in enumerate(self.children):
@@ -133,6 +167,16 @@ class Secure_Properties():
         return temp
 
     def fetch_data_in_range(self, baby, start_date, end_date):
+        """Fetch data by the date range
+
+        Args:
+            baby (object): Child Object
+            start_date (Date): start date
+            end_date (Date) : end date
+
+        Returns:
+            pd.DataFrame
+        """
         logger.info(f"Fetching children: {baby.name}")
         data = baby.data.copy()
         data.reset_index(inplace=True)
@@ -147,6 +191,15 @@ class Secure_Properties():
         return data
 
     def fetch_all_child_in_range(self, start_date, end_date):
+        """Fetch all childs in a certain date range
+
+        Args:
+            start_date (Date): start date
+            end_date (Date) : end date
+
+        Returns:
+            pd.DataFrame
+        """
         temp = {}
         logger.info(f"Fetching All Childs from {start_date} to {end_date}")
         logger.info(f"Children Size {len(self.children)}")
@@ -156,11 +209,21 @@ class Secure_Properties():
         return temp
 
     def get_feature_list(self):
+        """
+        Returns:
+            Names of all the feature present in the child data
+        """
         for i in self.children:
             self.feature_list = i.get_features()
             return self.feature_list
 
     def clear_dir(self, path_=".temp/"):
+        """
+        Function to clear a directory
+
+        Args:
+            path_ (str, optional): Defaults to ".temp/".
+        """
         try:
             shutil.rmtree(path_)
             os.mkdir(path_)
@@ -169,21 +232,50 @@ class Secure_Properties():
 
 
 class Parent(Biological_Properties, Secure_Properties, Shops):
-    def __init__(self, index_name, ticker_list, start_date, end_date):
+    """Parent Class.
+
+    Args:
+        Biological_Properties: CRUD childs (Stocks)
+        Secure_Properties : Tracker based properties
+        Shops : Class to pull in Data
+    """
+
+    def __init__(self, index_name: str, ticker_list, start_date, end_date):
+        """
+        Args:
+            index_name (str): Name of the Parent (Index Name)
+            ticker_list (List): List of Ticker Symbols
+            start_date (Date): Date object
+            end_date (Date): Date object
+        """
+
         self.name = index_name
         self.ticker_list = ticker_list
-        self.children = []
+        self.children = []  # Stores individual stocks
         self.start_date = start_date
         self.end_date = end_date
-        self.feature_list = []
-        self.Factors = {}
+        self.feature_list = []  # Stores feature present in the data
+        self.Factors = {}  # Stores associated factors
 
     def worker(self, tick):
+        """
+        Worker that pulls in data from Shop
+        Args:
+            tick (str): Name of the ticker
+
+        Returns:
+            Ticker name,Ticker Data
+        """
         name = str(tick)+'_'+str(self.start_date)+"_"+str(self.end_date)+".pkl"
         fetched_data = self.parser(name, tick)
         return [tick, fetched_data]
 
     def populate(self):
+        """Assign job to worker and populate Childs (Stock Data)
+
+        Returns:
+            Boolean
+        """
         if len(self.children) == 0:
             logger.info("Ticker Addition Process Initiated")
             logger.info(f"Found {len(self.ticker_list)} tickers")

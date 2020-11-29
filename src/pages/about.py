@@ -1,7 +1,5 @@
 import streamlit as st
 
-import awesome_streamlit as ast
-
 
 def question(que):
     st.markdown(f"<h3>{que}</h3>", unsafe_allow_html=True)
@@ -18,10 +16,12 @@ def add_source(link, title):
 
 
 def write():
-    """Used to write the page in the app.py file"""
+    """Front End of the Documentation Page
+    """
+    
     with st.spinner("Loading Documentation ..."):
         st.write(
-            f"# DOCUMENTATION/FAQs")
+            "# DOCUMENTATION/FAQs")
         question("What is hedging?")
         answer("<i> Hedging is a risk management strategy employed to offset losses in investments by taking an opposite position in a related asset.</i>")
         answer("The best way to understand hedging is to think of it as a form of insurance. When people decide to hedge, they are insuring themselves against a negative event's impact on their finances. This doesn't prevent all negative events from happening. However, if a negative event does happen and you're properly hedged, the impact of the event is reduced.")

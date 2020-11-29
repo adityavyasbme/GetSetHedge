@@ -7,18 +7,24 @@ from src.hedging.parser import Parser
 from src.hedging.caller import Caller
 import streamlit as st
 import logging
-import awesome_streamlit as ast
 from datetime import datetime
-import os
 from src.eda.government import Government
 from src.helper import create_logger
-from multiprocessing import Pool
 
 logger = create_logger('Hedging_Page', 'logs/Hedging.log',
                        logging.DEBUG, logging.WARNING)
 
 
 def fetch_tracker(tracker, gov):
+    """Fetches the population the framework will focus upon
+
+    Args:
+        tracker (list/dic): tracker parameters
+        gov (obj): Government object
+
+    Returns:
+        location of tracker
+    """
     # Fetch the tracker and find it's location
     tracker = tracker.split()
     name = tracker[0]
@@ -34,7 +40,17 @@ def fetch_tracker(tracker, gov):
     return loc
 
 
-def hedge(call, n, class_name):  # n represents number of ticker in a decile
+def hedge(call, n, class_name):
+    """performs BAB hedging
+
+    Args:
+        call (obj): Caller class's object
+        n (int):  number of ticker in a decile
+        class_name : Class in focus
+
+    Returns:
+        pd.DataFrame
+    """
     portfolio = pd.DataFrame()
     with st.spinner(f"Buying/Selling Stocks based on {class_name.__name__}. Please Wait... It might take long"):
         for chunk_num in range(len(call.time_chunks)):  # For a specific time Frame
@@ -93,6 +109,16 @@ def hedge(call, n, class_name):  # n represents number of ticker in a decile
 
 
 def hedge_dataframe(call, class_name, n):
+    """performs Momentum hedging
+
+    Args:
+        call (obj): Caller class's object
+        n (int):  number of ticker in a decile
+        class_name : Class in focus
+
+    Returns:
+        pd.DataFrame
+    """
     with st.spinner(f"Working on {class_name.__name__}"):
 
         portfolio = pd.DataFrame()
@@ -150,6 +176,9 @@ def hedge_dataframe(call, class_name, n):
 
 # pylint: disable=line-too-long
 def write():
+    """Front End of the Hedging Page
+    """
+
     def update(parent, gov):
         gov.population[loc[0]] = parent
         gov.dump("data/User1.pkl")

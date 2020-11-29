@@ -18,6 +18,16 @@ class Beta():
         }
 
     def calculate(self, date):
+        """
+        Args:
+            date (datetime): Date in focus
+
+        Returns:
+            Dictionary
+                Date: date in focus
+                Parameters: Regression Parameters
+        """
+
         stat = False
 
         DD = datetime.timedelta(days=self.config["required_days"])
@@ -29,7 +39,8 @@ class Beta():
         market = market["Adj Close"].reset_index(name=self.market_name)
 
         # try:
-        #     market = self.func(market_name,start_date=last_date, end_date = date)
+        #     market = self.func(market_name,start_date=last_date,
+        #           end_date = date)
         #     market = market["Adj Close"].reset_index(name=market_name)
         # except:
         #     print("Error in Market")

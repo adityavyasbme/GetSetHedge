@@ -1,6 +1,4 @@
 import pandas as pd
-import numpy as np
-import streamlit as st
 import logging
 from src.helper import create_logger
 
@@ -9,16 +7,29 @@ logger = create_logger('child', 'logs/Child.log',
 
 
 class Teacher_Knowledge:
+    """Tracker Based Class
+    """
     def __init__(self):
         self.data = None
 
     def childanalyzer(self):
+        """
+        TODO: Some kind of data Analyzer
+        """
         pass
 
     def get_features(self):
+        """
+        Returns:
+            Name of Features
+        """
         return self.data.columns
 
     def check_feature_length(self):
+        """
+        Returns:
+            Length of Features
+        """
         return len(self.data.columns)
 
 
@@ -58,6 +69,12 @@ class Child_Capabilities:
 
 
 class Child(Teacher_Knowledge, Child_Capabilities):
+    """Child(Stock) Class
+
+    Args:
+        Teacher_Knowledge : Tracker based class
+        Child_Capabilities : CRUD Features
+    """
     def __init__(self, ticker, data):
         self.name = ticker
         self.data = data

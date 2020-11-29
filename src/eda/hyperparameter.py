@@ -5,8 +5,9 @@
 
 def create_input_field():
     """
+    TODO:
     Creates Input Field on the streamlit app
-    Makes it necessary
+    Makes it compulsory to take that input
     """
     # Log the input created
 

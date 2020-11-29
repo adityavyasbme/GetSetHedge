@@ -1,12 +1,17 @@
-import streamlit as st
-import datetime
 import pandas as pd
 
 
 class Momentum():
 
     def __init__(self, baby):
+        """
+        Args:
+            baby (obj): Child Object
+        """
+
         self.baby = baby
+
+        # Config parameter
         self.config = {
             "name": "Momentum",
             "required_days": 80,
@@ -14,6 +19,13 @@ class Momentum():
         }
 
     def calculate(self, date):
+        """
+        Args:
+            date (datetime): Date in focus
+
+        Returns:
+            Momentum (pd.DataFrame)
+        """
         data = self.baby.data
 
         if len(data) == 0:

@@ -1,7 +1,6 @@
 """Home page shown when the user enters the application"""
 import streamlit as st
 import logging
-import awesome_streamlit as ast
 from datetime import datetime
 import os
 from src.eda.government import Government
@@ -13,6 +12,15 @@ logger = create_logger('viz', 'logs/Viz.log', logging.DEBUG, logging.WARNING)
 
 
 def fetch_tracker(tracker, gov):
+    """Fetches the population the framework will focus upon
+
+    Args:
+        tracker (list/dic): tracker parameters
+        gov (obj): Government object
+
+    Returns:
+        location of tracker
+    """
     # Fetch the tracker and find it's location
     tracker = tracker.split()
     name = tracker[0]
@@ -27,10 +35,12 @@ def fetch_tracker(tracker, gov):
         st.stop()
     return loc
 
-
 # pylint: disable=line-too-long
+
+
 def write():
-    """Used to write the page in the app.py file"""
+    """Front End of the Viz Page
+    """
     with st.spinner("Loading data ..."):
         def update(parent, gov):
             gov.population[loc[0]] = parent

@@ -1,3 +1,5 @@
+"""Downloads the SP500 stock index and stores it into a file if not present
+"""
 import pandas as pd
 try:
     table = pd.read_html(

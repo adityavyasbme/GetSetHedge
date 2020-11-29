@@ -1,14 +1,13 @@
-
+"""
+This script Runs the front-end of the Streamlit application.
+"""
 import src.pages.about
 import src.pages.gallery.index
 import src.pages.home
 import src.pages.data
 import src.pages.hedging
-
 import streamlit as st
 import awesome_streamlit as ast
-import logging
-
 
 PAGES = {
     "Home": src.pages.home,
@@ -20,7 +19,9 @@ PAGES = {
 
 
 def main():
-    """Main function of the App"""
+    '''
+    Frontend of Streamlit App.
+    '''
     st.sidebar.title("Navigation")
     selection = st.sidebar.radio("Go to", list(PAGES.keys()))
 

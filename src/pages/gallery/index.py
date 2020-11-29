@@ -6,17 +6,17 @@ Credits to Nhan for sharing that code
 """
 
 import logging
-from typing import List
 import streamlit as st
-import awesome_streamlit as ast
 import datetime
 from src.eda.government import Government
-from src.helper import find_csv_filenames, read_csv
+from src.helper import find_csv_filenames
 
 logger = logging.getLogger('input')
 
 
 def write():
+    """Front End of the Input Page
+    """
     st.write("# Input Page")
     start_date = st.sidebar.date_input('start date', datetime.date(2019, 1, 1))
     end_date = st.sidebar.date_input('End date', datetime.date(2019, 2, 27))

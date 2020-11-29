@@ -1,29 +1,30 @@
 import pandas as pd
-import streamlit as st
 from multiprocessing import Pool
 import logging
-import yfinance as yf
 from src.helper import create_logger
-from src.hedging.division import Division
-import datetime
 
-import importlib
-import inspect
-import os
-import glob
-import itertools
-from glob import iglob
-from os.path import basename, relpath, sep, splitext
+# Create the logger object
 logger = create_logger('Parser', 'logs/Hedging.log',
                        logging.DEBUG, logging.WARNING)
 
 
 class Parser():
+    """
+    Parser class that calls parent and divide the data and 
+    apply factor construction using multiprocessing
+
+    """
+
     def __init__(self, caller):
+        """
+        Args:
+            caller (obj): caller class object
+        """
         self.factor = []
         self.call = caller
 
     def import_plugins(self, *args, **kwargs):
+        # Check bottom code to read a file and all the classes present in it.
         return 0
 
     # def find_all_factor(self):
@@ -35,6 +36,16 @@ class Parser():
     #     # a = self.import_submodules("src/hedging/factors/")
 
     def run_factor(self, class_name, baby, time_chunk):
+        """Create Factors
+
+        Args:
+            class_name : class in focus
+            baby (obj): Child Object
+            time_chunk (list/tuple): Time Deciles
+
+        Returns:
+            [type]: [description]
+        """
 
         obj = class_name(baby, market_name="^GSPC")
         pool = Pool()
@@ -60,6 +71,15 @@ class Parser():
         return df.T
 
     def parse_multiple(self, num, class_name):
+        """Uses factors.<class_name> object to create factors, for chunks of time
+
+        Args:
+            num ([type]): Number of deciles needed 
+            class_name ([type]): Class in focus. for e.g. Momentum, or beta
+
+        Returns:
+            Factors (pd.DataFrame)
+        """
         # list of all children
         # get chunk of data where time_chunk
         time_chunk = self.call.time_chunks[num]
@@ -76,6 +96,9 @@ class Parser():
         return c
 
     def stat(self):
+        """Statistics function for monitoring.
+        """
+
         dic = {"Factors": {}}
         counter = 0
         for i in self.factors:
@@ -96,7 +119,7 @@ results = pool.map(self.fetch_class(class_name="Beta"), args)
 
 print(results)
 
-"""
+
 
 # def import_plugins(self,plugins_package_directory_path, base_class=None, create_instance=True, filter_abstract=True):
 
@@ -155,3 +178,5 @@ print(results)
 #         return None
 #     else:
 #         return factor
+
+"""
